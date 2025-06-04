@@ -41,10 +41,10 @@ class ECGConceptCNN(nn.Module):
 
                 ResidualBlock(64),
 
-                nn.Conv1d(64, 128, kernel_size=3, stride=1, padding=1),
+                nn.Conv1d(64, 128, kernel_size=5, stride=1, padding=2), # CORRECTION 1 
                 nn.BatchNorm1d(128),
                 nn.ReLU(),
-                nn.MaxPool1d(2),
+                nn.MaxPool1d(kernel_size=2),
 
                 ResidualBlock(128),
 
@@ -87,12 +87,13 @@ class ECGConceptCNN(nn.Module):
         else:
             raise ValueError("Au moins une des branches ECG ou Concept doit être activée.")
 
-        self.fc = nn.Sequential(
-            nn.Linear(fusion_input_size, 128),
+        self.fc = nn.Sequential( # CORRECTION 2
+            nn.Linear(fusion_input_size, 256),
             nn.ReLU(),
             nn.Dropout(0.3),
-            nn.Linear(128, num_classes)
+            nn.Linear(256, num_classes)
         )
+
 
     def forward(self, ecg=None, concepts=None):
         features = []
